@@ -3,7 +3,7 @@ public class Player
 
     public string name;
     public int hp;
-    public int money;
+    public int money = 100;
     public int randomPunchPower;
     public int bet;
     public bool playerDead;
@@ -13,8 +13,8 @@ public class Player
     {
         player.hp -= player2.randomPunchPower;
     }
-    public void playerBet(Player player, int bet){
-        player.money -= bet;
+    public void playerBet(){
+        money -= bet;
     }
     public void playerIsDead(Player player){
         player.playerDead = true;
