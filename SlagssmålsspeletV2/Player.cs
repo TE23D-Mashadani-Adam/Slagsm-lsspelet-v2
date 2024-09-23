@@ -2,17 +2,24 @@ public class Player
 {
 
     public string name;
-    public int hp;
+    public int hp = 100;
     public int money = 100;
-    public int randomPunchPower;
+    public int randomPunchPowerHard;
+    public int randomPunchPowerWeak;
     public int bet;
     public bool playerDead;
+    public bool playerHit;
 
 
-    public void playerPunched(Player player, Player player2)
+    public void playerPunched(Player punchingPlayer, int punchPower)
     {
-        player.hp -= player2.randomPunchPower;
+        if(punchPower == 1){
+        hp -= punchingPlayer.randomPunchPowerHard;
+        }else if(punchPower == 2){
+            hp -= punchingPlayer.randomPunchPowerWeak;
+        }
     }
+   
     public void playerBet(){
         money -= bet;
     }
