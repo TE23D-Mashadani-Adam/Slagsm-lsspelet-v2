@@ -15,7 +15,7 @@ void enemyNameSelected()
 
 while (true)
 {
-    string[] randomEnemyNames = ["Adam", "Saymmon", "Imad", "Ahmed", "Samir", "Simon"];
+    string[] randomEnemyNames = ["Saymmon", "Imad", "Ahmed", "Samir", "Simon"];
     int randomNum = random.Next(0, 5);
     string enemyName = randomEnemyNames[randomNum];
 
@@ -48,6 +48,7 @@ while (true)
         }
     }
 
+    //Game scene
     while (player.hp > 0 || enemyPlayer.hp > 0)
     {
 
@@ -55,7 +56,7 @@ while (true)
         enemyPlayer.playerHit = false;
 
         //Slagsmålet startar
-        player.randomPunchPowerWeak = random.Next(1, 30);
+        player.randomPunchPowerWeak = random.Next(10, 30);
         player.randomPunchPowerHard = random.Next(40, 80);
         Console.WriteLine($"Vill du använda starkare slag (1), eller svagare (2)? Ifall du inte väljer rätt kommer" +
          "ditt svara antas som svagare slag");
@@ -72,12 +73,23 @@ while (true)
             case "2":
                 punchSort = 2;
                 break;
+            default:
+                punchSort = 2;
+                break;
+        }
+
+        if (punchSort == 2)
+        {
+            player.randomPunchPower = random.Next(10, 30);
+        }
+        if (punchSort == 1)
+        {
+            player.randomPunchPower = random.Next(40, 80);
         }
 
         if (punchSort == 2)
         {
             if (hitArray[randomHit] > 3)
-
                 player.playerHit = true;
         }
         else if (punchSort == 1)
@@ -92,7 +104,8 @@ while (true)
         Console.ReadLine();
         if (player.playerHit)
         {
-            enemyPlayer.playerPunched(player, punchSort);
+            enemyPlayer.playerPunched(player);
+            Console.WriteLine("You hitted " + enemyPlayer.name);
         }
         else
         {
@@ -103,6 +116,8 @@ while (true)
         if (enemyPlayer.hp <= 0)
         {
             Console.WriteLine($"{enemyPlayer.name} is dead");
+            player.money += player.bet;
+            Console.WriteLine($"{player.name} har vunnit bet, och har {player.money} i pengar");
             break;
         }
 
@@ -116,10 +131,11 @@ while (true)
         }
 
         Console.WriteLine($"{enemyPlayer.name} is punching" + "\n");
-        enemyPlayer.randomPunchPowerHard = random.Next(10, 60);
+        enemyPlayer.randomPunchPower = random.Next(10, 60);
         if (enemyPlayer.playerHit)
         {
-            player.playerPunched(enemyPlayer, 1);
+            player.playerPunched(enemyPlayer);
+            Console.WriteLine("Enemy hitted you!");
         }
         else
         {
@@ -127,8 +143,11 @@ while (true)
         }
         Console.WriteLine($"{player.name} HP: {player.hp}");
 
-        if(player.hp <= 0){
+        if (player.hp <= 0)
+        {
             Console.WriteLine($"{player.name} is Dead");
+            player.money -= player.bet;
+            Console.WriteLine($"{player.name} har {player.money} kvar och har förlorat sin bet!");
         }
 
     }

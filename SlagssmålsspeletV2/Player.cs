@@ -6,27 +6,27 @@ public class Player
     public int money = 100;
     public int randomPunchPowerHard;
     public int randomPunchPowerWeak;
+    public int randomPunchPower;
     public int bet;
     public bool playerDead;
     public bool playerHit;
 
 
-    public void playerPunched(Player punchingPlayer, int punchPower)
+    public void playerPunched(Player punchingPlayer)
     {
-        if(punchPower == 1){
-        hp -= punchingPlayer.randomPunchPowerHard;
-        }else if(punchPower == 2){
-            hp -= punchingPlayer.randomPunchPowerWeak;
-        }
+        hp -= punchingPlayer.randomPunchPower;
     }
-   
-    public void playerBet(){
+
+
+    public void playerBet()
+    {
         money -= bet;
     }
-    public void playerIsDead(Player player){
+    public void playerIsDead(Player player)
+    {
         player.playerDead = true;
     }
-    
+
 
 
 
