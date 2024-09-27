@@ -22,132 +22,91 @@ while (true)
     Player enemyPlayer = new();
     enemyPlayer.name = enemyName;
 
+    string name = "";
+    
 
-    Console.WriteLine("Welcome to my game, choose your name:");
-    player.name = Console.ReadLine();
+    while (name == string.Empty)
+    {
+        Console.WriteLine("Welcome to my game, choose your name:");
+        name = Console.ReadLine();
+    }
 
+    player.name = name;
+   
     Console.WriteLine("Enemy name are going to be randomly generated, enemy name:");
     Console.WriteLine($"Enemy name: {enemyName}");
 
-    Console.WriteLine($"{player.name}, please place a bet between 1 and 10 dollars," + "\n" +
-    $"Your money: {player.money}");
+    Console.WriteLine($"{player.name}, please place a bet between 1 and 10 dollars,");
     bool isInteger = false;
 
-    //Spelaren väljer bet, måste vara ett siffra
-    while (!isInteger)
-    {
-        string betString = Console.ReadLine();
-        isInteger = int.TryParse(betString, out player.bet);
-        if (!isInteger)
-        {
-            Console.WriteLine("Pls type a number");
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    //Game scene
-    while (player.hp > 0 || enemyPlayer.hp > 0)
+    while (player.money > 0)
     {
 
-        player.playerHit = false;
-        enemyPlayer.playerHit = false;
+        Console.WriteLine($"{player.name} money: {player.money}");
 
-        //Slagsmålet startar
-        player.randomPunchPowerWeak = random.Next(10, 30);
-        player.randomPunchPowerHard = random.Next(40, 80);
-        Console.WriteLine($"Vill du använda starkare slag (1), eller svagare (2)? Ifall du inte väljer rätt kommer" +
-         "ditt svara antas som svagare slag");
-        string punchPowerSort = Console.ReadLine();
-        int punchSort = 2;
-        int[] hitArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        int randomHit = random.Next(0, hitArray.Length);
-
-        switch (punchPowerSort)
+        //Spelaren väljer bet, måste vara ett siffra
+        while (!isInteger)
         {
-            case "1":
-                punchSort = 1;
-                break;
-            case "2":
-                punchSort = 2;
-                break;
-            default:
-                punchSort = 2;
-                break;
-        }
-
-        if (punchSort == 2)
-        {
-            player.randomPunchPower = random.Next(10, 30);
-        }
-        if (punchSort == 1)
-        {
-            player.randomPunchPower = random.Next(40, 80);
-        }
-
-        if (punchSort == 2)
-        {
-            if (hitArray[randomHit] > 3)
-                player.playerHit = true;
-        }
-        else if (punchSort == 1)
-        {
-            if (hitArray[randomHit] < 3)
+            string betString = Console.ReadLine();
+            isInteger = int.TryParse(betString, out player.bet);
+            if (!isInteger)
             {
-                player.playerHit = true;
+                Console.WriteLine("Pls type a number");
+            }
+            else
+            {
+                break;
             }
         }
 
-        Console.WriteLine("\n" + $"Press enter to punch {enemyName}");
-        Console.ReadLine();
-        if (player.playerHit)
+        //Game scene
+        while (player.hp > 0 || enemyPlayer.hp > 0)
         {
-            enemyPlayer.playerPunched(player);
-            Console.WriteLine("You hitted " + enemyPlayer.name);
-        }
-        else
-        {
-            Console.WriteLine("\n" + "You missed!");
-        }
-        Console.WriteLine($"{enemyPlayer.name} HP: {enemyPlayer.hp}");
 
-        if (enemyPlayer.hp <= 0)
+            player.playerHit = false;
+            enemyPlayer.playerHit = false;
+
+            //Slagsmålet startar
+            player.randomPunchPowerWeak = random.Next(10, 30);
+            player.randomPunchPowerHard = random.Next(40, 80);
+
+            //Spelaren väljer hur stark slag den ska slå med
+            Console.WriteLine($"Vill du använda starkare slag (1), eller svagare (2)? Ifall du inte väljer rätt kommer" +
+             "ditt svara antas som svagare slag");
+            int[] hitArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+            player.choosePunshPower(random, player, hitArray);
+
+
+            //Spelaren slår motståndaren, koden drar bort hp ifall spelaren träffade
+            player.playerPunshScene(enemyPlayer);
+
+            if (enemyPlayer.hp <= 0)
+            {
+                Console.WriteLine($"{enemyPlayer.name} is dead");
+                player.money += player.bet;
+                Console.WriteLine($"{player.name} har vunnit bet, och har {player.money} i pengar");
+                break;
+            }
+
+            //Enemy player punching
+            enemyPlayer.botPlayerPunshScene(random, player, hitArray);
+
+            if (player.hp <= 0)
+            {
+                Console.WriteLine($"{player.name} is Dead");
+                player.money -= player.bet;
+                Console.WriteLine($"{player.name} har {player.money} kvar och har förlorat sin bet!");
+                break;
+            }
+
+        }
+
+        if (player.money <= 0)
         {
-            Console.WriteLine($"{enemyPlayer.name} is dead");
-            player.money += player.bet;
-            Console.WriteLine($"{player.name} har vunnit bet, och har {player.money} i pengar");
+            Console.WriteLine("Du förlorade alla dina pengar!");
+            player.GameOver();
             break;
-        }
-
-        //Enemy player punching
-
-        int randomEnemyPunchPower = random.Next(0, hitArray.Length);
-
-        if (hitArray[randomEnemyPunchPower] > 3)
-        {
-            enemyPlayer.playerHit = true;
-        }
-
-        Console.WriteLine($"{enemyPlayer.name} is punching" + "\n");
-        enemyPlayer.randomPunchPower = random.Next(10, 60);
-        if (enemyPlayer.playerHit)
-        {
-            player.playerPunched(enemyPlayer);
-            Console.WriteLine("Enemy hitted you!");
-        }
-        else
-        {
-            Console.WriteLine("Enemy missed!");
-        }
-        Console.WriteLine($"{player.name} HP: {player.hp}");
-
-        if (player.hp <= 0)
-        {
-            Console.WriteLine($"{player.name} is Dead");
-            player.money -= player.bet;
-            Console.WriteLine($"{player.name} har {player.money} kvar och har förlorat sin bet!");
         }
 
     }
