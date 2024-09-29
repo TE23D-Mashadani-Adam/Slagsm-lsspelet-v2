@@ -1,5 +1,7 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics.Contracts;
+using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 Player player = new();
 Random random = new();
@@ -15,15 +17,16 @@ void enemyNameSelected()
 
 while (true)
 {
-    string[] randomEnemyNames = ["Saymmon", "Imad", "Ahmed", "Samir", "Simon"];
-    int randomNum = random.Next(0, 5);
+    string[] randomEnemyNames = ["Saymmon", "Imad", "Ahmed", "Samir", "Simon", "Kerem", "Abdullah"];
+    int randomNum = random.Next(0, randomEnemyNames.Length - 1);
     string enemyName = randomEnemyNames[randomNum];
 
     Player enemyPlayer = new();
     enemyPlayer.name = enemyName;
 
     string name = "";
-    
+    player.bet = 1;
+
 
     while (name == string.Empty)
     {
@@ -32,31 +35,48 @@ while (true)
     }
 
     player.name = name;
-   
+
     Console.WriteLine("Enemy name are going to be randomly generated, enemy name:");
     Console.WriteLine($"Enemy name: {enemyName}");
 
-    Console.WriteLine($"{player.name}, please place a bet between 1 and 10 dollars,");
+    Console.WriteLine($"{player.name}, place a bet");
     bool isInteger = false;
 
     while (player.money > 0)
     {
+        isInteger = false;
+        player.hp = 100;
+        enemyPlayer.hp = 100;
 
         Console.WriteLine($"{player.name} money: {player.money}");
 
-        //Spelaren väljer bet, måste vara ett siffra
-        while (!isInteger)
+        while (true)
         {
-            string betString = Console.ReadLine();
-            isInteger = int.TryParse(betString, out player.bet);
-            if (!isInteger)
+
+            // Prompt player to enter a valid bet
+            while (!isInteger)
             {
-                Console.WriteLine("Pls type a number");
+                Console.WriteLine("Enter your bet (must be a valid number):");
+                string betString = Console.ReadLine();
+                isInteger = int.TryParse(betString, out player.bet);
+
+                if (!isInteger)
+                {
+                    Console.WriteLine("Please type a valid number.");
+                }
+                else if (player.bet <= 0)
+                {
+                    Console.WriteLine("Your bet must be greater than zero.");
+                    isInteger = false; // Gör så att loopen körs om
+                }
+                else if (player.bet > player.money)
+                {
+                    Console.WriteLine($"Your bet cannot exceed your available money ({player.money}).");
+                    isInteger = false; // Gör så att loopen körs om
+                }
             }
-            else
-            {
-                break;
-            }
+
+            break;
         }
 
         //Game scene
@@ -97,6 +117,7 @@ while (true)
                 Console.WriteLine($"{player.name} is Dead");
                 player.money -= player.bet;
                 Console.WriteLine($"{player.name} har {player.money} kvar och har förlorat sin bet!");
+                player.gameOver = true;
                 break;
             }
 
@@ -109,6 +130,12 @@ while (true)
             break;
         }
 
+    }
+
+    if (player.gameOver == true)
+    {
+        Console.WriteLine("Gameover!");
+        break;
     }
 
 

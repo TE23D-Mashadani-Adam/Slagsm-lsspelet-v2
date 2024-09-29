@@ -10,6 +10,7 @@ public class Player
     public int bet;
     public bool playerDead;
     public bool playerHit;
+    public bool gameOver;
 
 
     public void playerPunched(Player punchingPlayer)
