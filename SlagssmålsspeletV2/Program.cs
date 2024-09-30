@@ -39,88 +39,123 @@ while (true)
     Console.WriteLine("Enemy name are going to be randomly generated, enemy name:");
     Console.WriteLine($"Enemy name: {enemyName}");
 
-    Console.WriteLine($"{player.name}, place a bet");
+    Console.WriteLine("Välj mellan 1 och 3 runder att köra, ifall antal rundor har gått ut så vinner den som har" +
+    " mest hp");
+
+    bool roundCountIsInt = false;
+    int roundCount = 0;
+
     bool isInteger = false;
 
     while (player.money > 0)
     {
+        //Användaren måste välja ett siffra mellan 5 och 10
+        while (!roundCountIsInt)
+        {
+            string roundCountInput = Console.ReadLine();
+            roundCountIsInt = int.TryParse(roundCountInput, out roundCount);
+            if (!roundCountIsInt || roundCount < 5 || roundCount > 10)
+            {
+                roundCountIsInt = false;
+                Console.WriteLine("Skriv ett giltigt nummer mellan 5 och 10");
+            }
+        }
+
+
         isInteger = false;
         player.hp = 100;
         enemyPlayer.hp = 100;
 
-        Console.WriteLine($"{player.name} money: {player.money}");
+        Console.WriteLine($"{player.name} pengar: {player.money}");
 
-        while (true)
+
+
+        // Prompt player to enter a valid bet
+        while (!isInteger)
         {
+            Console.WriteLine("Skriv ditt bet (måste vara ett giltigt nummer):");
+            string betString = Console.ReadLine();
+            isInteger = int.TryParse(betString, out player.bet);
 
-            // Prompt player to enter a valid bet
-            while (!isInteger)
+            if (!isInteger)
             {
-                Console.WriteLine("Enter your bet (must be a valid number):");
-                string betString = Console.ReadLine();
-                isInteger = int.TryParse(betString, out player.bet);
-
-                if (!isInteger)
-                {
-                    Console.WriteLine("Please type a valid number.");
-                }
-                else if (player.bet <= 0)
-                {
-                    Console.WriteLine("Your bet must be greater than zero.");
-                    isInteger = false; // Gör så att loopen körs om
-                }
-                else if (player.bet > player.money)
-                {
-                    Console.WriteLine($"Your bet cannot exceed your available money ({player.money}).");
-                    isInteger = false; // Gör så att loopen körs om
-                }
+                Console.WriteLine("Skriv ett giltigt nummer.");
             }
-
-            break;
+            else if (player.bet <= 0)
+            {
+                Console.WriteLine("Ditt bet måste vara mer än noll.");
+                isInteger = false; // Gör så att loopen körs om
+            }
+            else if (player.bet > player.money)
+            {
+                Console.WriteLine($"Din bet kan inte vara högre summa än dina pengar ({player.money}).");
+                isInteger = false; // Gör så att loopen körs om
+            }
         }
 
+
         //Game scene
-        while (player.hp > 0 || enemyPlayer.hp > 0)
+        while (true)
         {
-
-            player.playerHit = false;
-            enemyPlayer.playerHit = false;
-
-            //Slagsmålet startar
-            player.randomPunchPowerWeak = random.Next(10, 30);
-            player.randomPunchPowerHard = random.Next(40, 80);
-
-            //Spelaren väljer hur stark slag den ska slå med
-            Console.WriteLine($"Vill du använda starkare slag (1), eller svagare (2)? Ifall du inte väljer rätt kommer" +
-             "ditt svara antas som svagare slag");
-            int[] hitArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-            player.choosePunshPower(random, player, hitArray);
-
-
-            //Spelaren slår motståndaren, koden drar bort hp ifall spelaren träffade
-            player.playerPunshScene(enemyPlayer);
-
-            if (enemyPlayer.hp <= 0)
+            for (int i = 1; i <= roundCount; i++)
             {
-                Console.WriteLine($"{enemyPlayer.name} is dead");
-                player.money += player.bet;
-                Console.WriteLine($"{player.name} har vunnit bet, och har {player.money} i pengar");
-                break;
+                player.playerHit = false;
+                enemyPlayer.playerHit = false;
+
+                //Slagsmålet startar
+                player.randomPunchPowerWeak = random.Next(10, 30);
+                player.randomPunchPowerHard = random.Next(40, 80);
+
+                Console.WriteLine($"Runda {i}" + "\n");
+
+                //Spelaren väljer hur stark slag den ska slå med
+                Console.WriteLine($"Vill du använda starkare slag (1), eller svagare (2)? Ifall du inte väljer rätt kommer" +
+                 "ditt svara antas som svagare slag");
+                int[] hitArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+                player.choosePunshPower(random, player, hitArray);
+
+
+                //Spelaren slår motståndaren, koden drar bort hp ifall spelaren träffade
+                player.playerPunshScene(enemyPlayer);
+
+                if (enemyPlayer.hp <= 0)
+                {
+                    Console.WriteLine($"{enemyPlayer.name} är död. {player.name} vann!");
+                    player.money += player.bet;
+                    Console.WriteLine($"{player.name} har vunnit bet, och har {player.money} i pengar");
+                    break;
+                }
+
+                //Enemy player punching
+                enemyPlayer.botPlayerPunshScene(random, player, hitArray);
+
+                if (player.hp <= 0)
+                {
+                    Console.WriteLine($"{player.name} är död. {enemyPlayer.name} vann!");
+                    player.money -= player.bet;
+                    Console.WriteLine($"{player.name} har {player.money} kvar och har förlorat sin bet!");
+                    player.gameOver = true;
+                    break;
+                }
+
             }
-
-            //Enemy player punching
-            enemyPlayer.botPlayerPunshScene(random, player, hitArray);
-
-            if (player.hp <= 0)
+            //Ifall enemy hade mer hp än player
+            if (player.hp < enemyPlayer.hp)
             {
-                Console.WriteLine($"{player.name} is Dead");
+                Console.WriteLine($"{enemyPlayer.name} har vunnit!");
                 player.money -= player.bet;
                 Console.WriteLine($"{player.name} har {player.money} kvar och har förlorat sin bet!");
-                player.gameOver = true;
-                break;
             }
+            else if (enemyPlayer.hp < player.hp) //Ifall player hade mer hp än enemy
+            {
+                Console.WriteLine($"{player.name} har vunnit!");
+                player.money += player.bet;
+                Console.WriteLine($"{player.name} har {player.money} kvar och har vunniy sin bet!");
 
+            }
+            //Vi går ut från loopen
+            break;
         }
 
         if (player.money <= 0)
