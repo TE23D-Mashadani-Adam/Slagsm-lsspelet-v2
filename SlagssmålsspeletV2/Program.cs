@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 Player player = new();
 Random random = new();
 
+bool roundCountFinished;
+
 
 
 
@@ -39,8 +41,7 @@ while (true)
     Console.WriteLine("Enemy name are going to be randomly generated, enemy name:");
     Console.WriteLine($"Enemy name: {enemyName}");
 
-    Console.WriteLine("Välj mellan 1 och 3 runder att köra, ifall antal rundor har gått ut så vinner den som har" +
-    " mest hp");
+
 
     bool roundCountIsInt = false;
     int roundCount = 0;
@@ -49,6 +50,10 @@ while (true)
 
     while (player.money > 0)
     {
+        roundCountIsInt = false;
+        roundCountFinished = false;
+        Console.WriteLine("\n" + "Välj mellan 5 och 10 runder att köra, ifall antal rundor har gått ut så vinner den som har" +
+    " mest hp");
         //Användaren måste välja ett siffra mellan 5 och 10
         while (!roundCountIsInt)
         {
@@ -134,21 +139,26 @@ while (true)
                 {
                     Console.WriteLine($"{player.name} är död. {enemyPlayer.name} vann!");
                     player.money -= player.bet;
-                    Console.WriteLine($"{player.name} har {player.money} kvar och har förlorat sin bet!");
+                    Console.WriteLine($"{player.name} har förlorat sin bet!");
                     player.gameOver = true;
                     break;
                 }
-
+                if (i >= roundCount)
+                {
+                    roundCountFinished = true;
+                }
             }
             //Ifall enemy hade mer hp än player
-            if (player.hp < enemyPlayer.hp)
+            if (player.hp < enemyPlayer.hp && roundCountFinished)
             {
+                Console.WriteLine("Antal rundor är slut");
                 Console.WriteLine($"{enemyPlayer.name} har vunnit!");
                 player.money -= player.bet;
-                Console.WriteLine($"{player.name} har {player.money} kvar och har förlorat sin bet!");
+                Console.WriteLine($"{player.name} har förlorat sin bet!");
             }
-            else if (enemyPlayer.hp < player.hp) //Ifall player hade mer hp än enemy
+            else if (enemyPlayer.hp < player.hp && roundCountFinished) //Ifall player hade mer hp än enemy
             {
+                Console.WriteLine("Antal rundor är slut");
                 Console.WriteLine($"{player.name} har vunnit!");
                 player.money += player.bet;
                 Console.WriteLine($"{player.name} har {player.money} kvar och har vunniy sin bet!");
