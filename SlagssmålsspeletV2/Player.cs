@@ -51,19 +51,12 @@ public class Player
         if (punchSort == 2)
         {
             player.randomPunchPower = random.Next(10, 30);
-        }
-        if (punchSort == 1)
-        {
-            player.randomPunchPower = random.Next(40, 80);
-        }
-
-        if (punchSort == 2)
-        {
             if (hitArray[randomHit] > 3)
                 player.playerHit = true;
         }
         else if (punchSort == 1)
         {
+            player.randomPunchPower = random.Next(40, 80);
             if (hitArray[randomHit] < 3)
             {
                 player.playerHit = true;
@@ -92,7 +85,7 @@ public class Player
     {
         int randomEnemyPunchPower = random.Next(0, hitArray.Length);
 
-        if (hitArray[randomEnemyPunchPower] > 3)
+        if (hitArray[randomEnemyPunchPower] > 4)
         {
             playerHit = true;
         }
@@ -113,7 +106,7 @@ public class Player
 
     public void GameOver()
     {
-        Console.WriteLine("");
+        Console.WriteLine("Gameover");
     }
 
 

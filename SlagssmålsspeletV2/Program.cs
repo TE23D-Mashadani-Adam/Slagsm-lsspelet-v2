@@ -28,13 +28,16 @@ while (true)
 
     string name = "";
     player.bet = 1;
-
-
-    while (name == string.Empty)
+    bool success = true;
+    
+    while (success || name == string.Empty)
     {
         Console.WriteLine("Welcome to my game, choose your name:");
         name = Console.ReadLine();
+        success = int.TryParse(name, out int t);
     }
+
+    
 
     player.name = name;
 
@@ -50,8 +53,13 @@ while (true)
 
     while (player.money > 0)
     {
+        // Resetar alla variabler inför ett nytt spel runda
         roundCountIsInt = false;
         roundCountFinished = false;
+        player.hp = 100;
+        enemyPlayer.hp = 100;
+
+
         Console.WriteLine("\n" + "Välj mellan 5 och 10 runder att köra, ifall antal rundor har gått ut så vinner den som har" +
     " mest hp");
         //Användaren måste välja ett siffra mellan 5 och 10
@@ -68,8 +76,7 @@ while (true)
 
 
         isInteger = false;
-        player.hp = 100;
-        enemyPlayer.hp = 100;
+
 
         Console.WriteLine($"{player.name} pengar: {player.money}");
 
@@ -128,7 +135,8 @@ while (true)
                 {
                     Console.WriteLine($"{enemyPlayer.name} är död. {player.name} vann!");
                     player.money += player.bet;
-                    Console.WriteLine($"{player.name} har vunnit bet, och har {player.money} i pengar");
+                    Console.WriteLine($"{player.name} har vunnit bet!" + "\n");
+                    Console.WriteLine($"{player.name} pengar: {player.money}");
                     break;
                 }
 
@@ -139,7 +147,8 @@ while (true)
                 {
                     Console.WriteLine($"{player.name} är död. {enemyPlayer.name} vann!");
                     player.money -= player.bet;
-                    Console.WriteLine($"{player.name} har förlorat sin bet!");
+                    Console.WriteLine($"{player.name} har förlorat sin bet!" + "\n");
+                    Console.WriteLine($"{player.name} pengar: {player.money}");
                     player.gameOver = true;
                     break;
                 }
@@ -154,15 +163,19 @@ while (true)
                 Console.WriteLine("Antal rundor är slut");
                 Console.WriteLine($"{enemyPlayer.name} har vunnit!");
                 player.money -= player.bet;
-                Console.WriteLine($"{player.name} har förlorat sin bet!");
+                Console.WriteLine($"{player.name} har förlorat sin bet!" + "\n");
+
+                Console.WriteLine($"{player.name} pengar: {player.money}");
+
             }
             else if (enemyPlayer.hp < player.hp && roundCountFinished) //Ifall player hade mer hp än enemy
             {
                 Console.WriteLine("Antal rundor är slut");
                 Console.WriteLine($"{player.name} har vunnit!");
                 player.money += player.bet;
-                Console.WriteLine($"{player.name} har {player.money} kvar och har vunniy sin bet!");
+                Console.WriteLine($"{player.name} har {player.money} kvar och har vunniy sin bet!" + "\n");
 
+                Console.WriteLine($"{player.name} pengar: {player.money}");
             }
             //Vi går ut från loopen
             break;
@@ -179,7 +192,7 @@ while (true)
 
     if (player.gameOver == true)
     {
-        Console.WriteLine("Gameover!");
+        player.GameOver();
         break;
     }
 
